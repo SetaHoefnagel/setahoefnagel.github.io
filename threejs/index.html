@@ -1,35 +1,63 @@
+
 <!DOCTYPE html>
 <html>
   <head>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r118/three.js"></script>
     <title>Threejs Example</title>
-  </head>
-  <body>
+    
     <script>
+    	let clicked = false;
 			var scene = new THREE.Scene();
-			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 100 );
 
 			var renderer = new THREE.WebGLRenderer();
-			renderer.setSize( window.innerWidth, window.innerHeight );
-			document.body.appendChild( renderer.domElement );
-
+      var clock = new THREE.Clock();
+      
+			
 			var geometry = new THREE.BoxGeometry();
 			var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
 			var cube = new THREE.Mesh( geometry, material );
+      
+      renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+      
 			scene.add( cube );
+      scene.background = new THREE.Color( 0xe0e0e0 );
+      scene.fog = new THREE.Fog( 0xe0e0e0, 20, 100 );
+			
+      camera.position.z = 5;
+			camera.position.y = 1.5;
+			camera.rotation.x = -0.2;
 
-			camera.position.z = 5;
+			// lights
+
+      var light = new THREE.HemisphereLight( 0xffffff, 0x444444 );
+      light.position.set( 0, 20, 0 );
+      scene.add( light );
+
+      light = new THREE.DirectionalLight( 0xffffff );
+      light.position.set( 0, 20, 10 );
+      scene.add( light );
+
+      // ground
+
+      var grid = new THREE.GridHelper( 200, 40, 0x000000, 0x000000 );
+      grid.material.opacity = 0.2;
+      grid.material.transparent = true;
+      scene.add( grid );
 
 			var animate = function () {
 				requestAnimationFrame( animate );
 
-				cube.rotation.x += 0.01;
-				cube.rotation.y += 0.01;
+				if(!clicked)
+					cube.rotation.y += 0.01;
 
 				renderer.render( scene, camera );
 			};
 
 			animate();
     </script>
+  </head>
+  <body>
   </body>
 </html>
