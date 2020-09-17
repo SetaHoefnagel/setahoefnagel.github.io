@@ -1,154 +1,53 @@
-<!DOCTYPE html>
-<head>
-	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-	<title>Hello, AR Cube!</title>
-	<!-- include three.js library -->
-	<script src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r118/three.js'></script>
-	<!-- include jsartookit -->
-	<script src="https://cdn.jsdelivr.net/npm/jsartoolkit5@0.0.4/build/artoolkit.min.js"></script>
-  
-<!-- ar.js -->
-<script src="https://aframe.io/releases/0.8.0/aframe.min.js"></script>
-<script src="https://cdn.rawgit.com/jeromeetienne/AR.js/1.5.5/aframe/build/aframe-ar.js"></script>
+<script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
 
-</head>
+<style>
+  .arjs-loader {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 
-<body style='margin : 0px; overflow: hidden; font-family: Monospace;'>
+  .arjs-loader div {
+    text-align: center;
+    font-size: 1.25em;
+    color: white;
+  }
+</style>
 
-<!-- 
-  Example created by Lee Stemkoski: https://github.com/stemkoski
-  Based on the AR.js library and examples created by Jerome Etienne: https://github.com/jeromeetienne/AR.js/
--->
+<!-- rawgithack development URL -->
+<script src='https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js'></script>
+<script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+<!-- we import arjs version without NFT but with marker + location based support -->
+<script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
 
-<script>
+<body style='margin : 0px; overflow: hidden;'>
+   <!-- minimal loader shown until image descriptors are loaded -->
+  <div class="arjs-loader">
+    <div>Loading, please wait...</div>
+  </div>
+    <a-scene
+        vr-mode-ui="enabled: false;"
+        renderer="logarithmicDepthBuffer: true;"
+        embedded arjs='trackingMethod: best; sourceType: webcam; debugUIEnabled: false;'>
 
-var scene, camera, renderer, clock, deltaTime, totalTime;
-
-var arToolkitSource, arToolkitContext;
-
-var markerRoot1, markerRoot2;
-
-var mesh1;
-
-initialize();
-animate();
-
-function initialize()
-{
-	scene = new THREE.Scene();
-
-	let ambientLight = new THREE.AmbientLight( 0xcccccc, 0.5 );
-	scene.add( ambientLight );
-				
-	camera = new THREE.Camera();
-	scene.add(camera);
-
-	renderer = new THREE.WebGLRenderer({
-		antialias : true,
-		alpha: true
-	});
-	renderer.setClearColor(new THREE.Color('lightgrey'), 0)
-	renderer.setSize( 640, 480 );
-	renderer.domElement.style.position = 'absolute'
-	renderer.domElement.style.top = '0px'
-	renderer.domElement.style.left = '0px'
-	document.body.appendChild( renderer.domElement );
-
-	clock = new THREE.Clock();
-	deltaTime = 0;
-	totalTime = 0;
-	
-	////////////////////////////////////////////////////////////
-	// setup arToolkitSource
-	////////////////////////////////////////////////////////////
-
-	arToolkitSource = new THREEx.ArToolkitSource({
-		sourceType : 'webcam',
-	});
-
-	function onResize()
-	{
-		arToolkitSource.onResize()	
-		arToolkitSource.copySizeTo(renderer.domElement)	
-		if ( arToolkitContext.arController !== null )
-		{
-			arToolkitSource.copySizeTo(arToolkitContext.arController.canvas)	
-		}	
-	}
-
-	arToolkitSource.init(function onReady(){
-		onResize()
-	});
-	
-	// handle resize event
-	window.addEventListener('resize', function(){
-		onResize()
-	});
-	
-	////////////////////////////////////////////////////////////
-	// setup arToolkitContext
-	////////////////////////////////////////////////////////////	
-
-	// create atToolkitContext
-	arToolkitContext = new THREEx.ArToolkitContext({
-		detectionMode: "mono_and_matrix",
-		matrixCodeType: "3x3",
-	});
-	
-	// copy projection matrix to camera when initialization complete
-	arToolkitContext.init( function onCompleted(){
-		camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
-	});
-
-	////////////////////////////////////////////////////////////
-	// setup markerRoots
-	////////////////////////////////////////////////////////////
-
-	// build markerControls
-	markerRoot1 = new THREE.Group();
-	scene.add(markerRoot1);
-	let markerControls1 = new THREEx.ArMarkerControls(arToolkitContext, markerRoot1, {
-		type: "barcode", barcodeValue: "5",
-	})
-
-	let geometry1	= new THREE.CubeGeometry(1,1,1);
-	let material1	= new THREE.MeshNormalMaterial({
-		transparent: true,
-		opacity: 0.5,
-		side: THREE.DoubleSide
-	}); 
-	
-	mesh1 = new THREE.Mesh( geometry1, material1 );
-	mesh1.position.y = 0.5;
-	
-	markerRoot1.add( mesh1 );
-}
-
-
-function update()
-{
-	// update artoolkit on every frame
-	if ( arToolkitSource.ready !== false )
-		arToolkitContext.update( arToolkitSource.domElement );
-}
-
-
-function render()
-{
-	renderer.render( scene, camera );
-}
-
-
-function animate()
-{
-	requestAnimationFrame(animate);
-	deltaTime = clock.getDelta();
-	totalTime += deltaTime;
-	update();
-	render();
-}
-
-</script>
-
+        <!-- use rawgithack to retrieve the correct url for nft marker (see 'trex' below) -->
+        <a-nft
+            type='nft' url='https://arjs-cors-proxy.herokuapp.com/https://raw.githack.com/SetaHoefnagel/setahoefnagel.github.io/tree/master/threejs/business-card/business-card-front'
+            smooth='true' smoothCount='10' smoothTolerance='0.01' smoothThreshold='5'>
+            <a-entity
+                gltf-model='https://arjs-cors-proxy.herokuapp.com/https://raw.githack.com/AR-js-org/AR.js/master/aframe/examples/image-tracking/nft/trex/scene.gltf'
+                scale="5 5 5"
+                position="100 100 0"
+                >
+            </a-entity>
+        </a-nft>
+		<a-entity camera></a-entity>
+    </a-scene>
 </body>
-</html>
